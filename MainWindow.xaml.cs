@@ -41,12 +41,13 @@ namespace MicroexplorerApp
         {
             this.InitializeComponent();
             TrySetSystemBackdrop();
+            // custom titlebar
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(AppTitleBar);
         }
 
         
-
+        // three methods to make a flyout with formatting
         private void Menu_Opening(object sender, object e)
         {
             CommandBarFlyout myFlyout = sender as CommandBarFlyout;
@@ -80,6 +81,7 @@ namespace MicroexplorerApp
             wordsCount.Text = "Words count: " + words.Length;
         }
 
+        // creating a backdrop for Win11
         bool TrySetSystemBackdrop()
         {
             if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())

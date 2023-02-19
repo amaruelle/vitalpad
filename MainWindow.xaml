@@ -23,7 +23,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-
+        
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="20">
             <Button Style="{StaticResource AccentButtonStyle}" Content="New File" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"/>
         </StackPanel>
