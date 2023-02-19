@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MicroexplorerApp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MicroexplorerApp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
