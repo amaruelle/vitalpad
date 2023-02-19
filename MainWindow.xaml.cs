@@ -23,6 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.InteropServices; // For DllImport
 using WinRT;
 using System.Xml.Linq;
+using Microsoft.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,44 +39,6 @@ namespace MicroexplorerApp
         {
             this.InitializeComponent();
             TrySetSystemBackdrop();
-            // custom titlebar
-            this.ExtendsContentIntoTitleBar = true;
-            this.SetTitleBar(AppTitleBar);
-        }
-
-        
-        // three methods to make a flyout with formatting
-        private void Menu_Opening(object sender, object e)
-        {
-            CommandBarFlyout myFlyout = sender as CommandBarFlyout;
-            if (myFlyout.Target == REBCustom)
-            {
-                AppBarButton myButton = new AppBarButton();
-                myButton.Command = new StandardUICommand(StandardUICommandKind.Share);
-                myFlyout.PrimaryCommands.Add(myButton);
-            }
-        }
-
-        private void REBCustom_Loaded(object sender, RoutedEventArgs e)
-        {
-            REBCustom.SelectionFlyout.Opening += Menu_Opening;
-            REBCustom.ContextFlyout.Opening += Menu_Opening;
-        }
-
-        private void REBCustom_Unloaded(object sender, RoutedEventArgs e)
-        {
-            REBCustom.SelectionFlyout.Opening -= Menu_Opening;
-            REBCustom.ContextFlyout.Opening -= Menu_Opening;
-        }
-
-        private void REBCustom_TextChanged(object sender, RoutedEventArgs e)
-        {
-            string value = string.Empty;
-            REBCustom.Document.GetText(Microsoft.UI.Text.TextGetOptions.AdjustCrlf, out value);
-            symbolsCount.Text = "Symbols count: " + value.Length;
-            char[] delimiters = new char[] { ' ', ',', '.', ';', ':', '?', '!' };
-            string[] words = value.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            wordsCount.Text = "Words count: " + words.Length;
         }
 
         // creating a backdrop for Win11
@@ -143,6 +106,54 @@ namespace MicroexplorerApp
                 case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
             }
         }
+
+        private void TabView_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                (sender as TabView).TabItems.Add(CreateNewTab());
+            }
+        }
+
+        private void TabView_AddButtonClick(TabView sender, object args)
+        {
+            sender.TabItems.Add(CreateNewTab());
+        }
+
+        private async void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        {
+            ContentDialog dialog = new ContentDialog();
+
+            dialog.XamlRoot = Content.XamlRoot;
+            dialog.Style = Microsoft.UI.Xaml.Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Save your work?";
+            dialog.PrimaryButtonText = "Save";
+            dialog.SecondaryButtonText = "Don't Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.Content = "Unsaved changes will disappear.";
+            dialog.Height = this.Bounds.Height;
+            dialog.Width = this.Bounds.Width;
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Margin = new Thickness(0, -32, 0, 0);
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Secondary) sender.TabItems.Remove(args.Tab);
+        }
+
+        private TabViewItem CreateNewTab()
+        {
+            TabViewItem newItem = new TabViewItem();
+
+            newItem.Header = "New Document";
+            newItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Document };
+
+            // The content of the tab is often a frame that contains a page, though it could be any UIElement.
+            Frame frameTab = new Frame();
+            frameTab.Navigate(typeof(EditorPage));
+            newItem.Content = frameTab;
+
+            return newItem;
+        }
     }
 
     class WindowsSystemDispatcherQueueHelper
@@ -177,5 +188,7 @@ namespace MicroexplorerApp
                 CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
             }
         }
+
     }
+
 }
