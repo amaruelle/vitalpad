@@ -41,7 +41,7 @@
             </MenuBarItem>
 
             <MenuBarItem Title="Help">
-                <MenuFlyoutItem Text="About"/>
+                <MenuFlyoutItem Text="About" Name="AboutApp" Click="AboutApp_OnClick"/>
             </MenuBarItem>
         </MenuBar>
         <RichEditBox x:Name="REBCustom"

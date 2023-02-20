@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -136,6 +137,25 @@ namespace Vitalpad
                 new Windows.UI.Popups.MessageDialog("File " + file.Name + " couldn't be saved.");
             await errorBox.ShowAsync();
 
+        }
+
+        private async void AboutApp_OnClick(object sender, RoutedEventArgs e)
+        {
+            var info = new ContentDialog()
+            {
+                XamlRoot = Content.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = "Vitalpad",
+                PrimaryButtonText = "GitHub repo",
+                CloseButtonText = "Close",
+                Content =
+                    "Small notepad app with formatting options written on C# using WinUI 3. " +
+                    "\nDeveloped by Leftbrained Inc. in 2023.",
+                DefaultButton = ContentDialogButton.Primary
+            };
+            var result = await info.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/AmaruelleOF/Vitalpad"));
         }
     }
 }
