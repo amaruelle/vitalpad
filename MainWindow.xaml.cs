@@ -29,17 +29,17 @@ using System.ComponentModel;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace MicroexplorerApp
+namespace Vitalpad
 {
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindow
     {
-        WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See below for implementation.
-        MicaController m_backdropController;
-        SystemBackdropConfiguration m_configurationSource;
+        private WindowsSystemDispatcherQueueHelper _mWsdqHelper; // See below for implementation.
+        private MicaController _mBackdropController;
+        private SystemBackdropConfiguration _mConfigurationSource;
 
         public TabView GetTabView()
         {
-            return mainTab;
+            return MainTab;
         }
         public MainWindow()
         {
@@ -48,56 +48,55 @@ namespace MicroexplorerApp
         }
 
         // creating a backdrop for Win11
-        bool TrySetSystemBackdrop()
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool TrySetSystemBackdrop()
         {
-            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
-            {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+            if (!MicaController.IsSupported())
+                return false; // Mica is not supported on this system
+            _mWsdqHelper = new WindowsSystemDispatcherQueueHelper();
+            _mWsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
-                // Create the policy object.
-                m_configurationSource = new SystemBackdropConfiguration();
-                this.Activated += Window_Activated;
-                this.Closed += Window_Closed;
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+            // Create the policy object.
+            _mConfigurationSource = new SystemBackdropConfiguration();
+            this.Activated += Window_Activated;
+            this.Closed += Window_Closed;
+            ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 
-                // Initial configuration state.
-                m_configurationSource.IsInputActive = true;
-                SetConfigurationSourceTheme();
+            // Initial configuration state.
+            _mConfigurationSource.IsInputActive = true;
+            SetConfigurationSourceTheme();
 
-                m_backdropController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
+            _mBackdropController = new MicaController();
     
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
-            m_backdropController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                m_backdropController.SetSystemBackdropConfiguration(m_configurationSource);
-                return true; // succeeded
-            }
+            _mBackdropController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+            _mBackdropController.SetSystemBackdropConfiguration(_mConfigurationSource);
+            return true; // succeeded
 
-            return false; // Mica is not supported on this system
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs args)
         {
-            m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+            _mConfigurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
         }
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
             // Make sure any Mica/Acrylic controller is disposed
             // so it doesn't try to use this closed window.
-            if (m_backdropController != null)
+            if (_mBackdropController != null)
             {
-                m_backdropController.Dispose();
-                m_backdropController = null;
+                _mBackdropController.Dispose();
+                _mBackdropController = null;
             }
             this.Activated -= Window_Activated;
-            m_configurationSource = null;
+            _mConfigurationSource = null;
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)
         {
-            if (m_configurationSource != null)
+            if (_mConfigurationSource != null)
             {
                 SetConfigurationSourceTheme();
             }
@@ -105,56 +104,56 @@ namespace MicroexplorerApp
 
         private void SetConfigurationSourceTheme()
         {
-            switch (((FrameworkElement)this.Content).ActualTheme)
+            _mConfigurationSource.Theme = ((FrameworkElement)this.Content).ActualTheme switch
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
-                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
-                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
-            }
+                ElementTheme.Dark => SystemBackdropTheme.Dark,
+                ElementTheme.Light => SystemBackdropTheme.Light,
+                ElementTheme.Default => SystemBackdropTheme.Default,
+                _ => _mConfigurationSource.Theme
+            };
         }
 
         private void TabView_Loaded(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
-                (sender as TabView).TabItems.Add(CreateNewTab());
+                ((TabView)sender).TabItems.Add(CreateNewTab());
             }
         }
 
-        public void TabView_AddButtonClick(TabView sender, object args)
+        private void TabView_AddButtonClick(TabView sender, object args)
         {
             sender.TabItems.Add(CreateNewTab());
         }
 
         private async void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            ContentDialog dialog = new ContentDialog();
-
-            dialog.XamlRoot = Content.XamlRoot;
-            dialog.Style = Microsoft.UI.Xaml.Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = "Save your work?";
-            dialog.PrimaryButtonText = "Save";
-            dialog.SecondaryButtonText = "Don't Save";
-            dialog.CloseButtonText = "Cancel";
-            dialog.Content = "Unsaved changes will disappear.";
-            dialog.Height = this.Bounds.Height;
-            dialog.Width = this.Bounds.Width;
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Margin = new Thickness(0, -32, 0, 0);
+            var dialog = new ContentDialog
+            {
+                XamlRoot = Content.XamlRoot,
+                Style = Microsoft.UI.Xaml.Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = "Save your work?",
+                PrimaryButtonText = "Save",
+                SecondaryButtonText = "Don't Save",
+                CloseButtonText = "Cancel",
+                Content = "Unsaved changes will disappear.",
+                DefaultButton = ContentDialogButton.Primary
+            };
 
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Secondary) sender.TabItems.Remove(args.Tab);
         }
 
-        public static TabViewItem CreateNewTab()
+        private static TabViewItem CreateNewTab()
         {
-            TabViewItem newItem = new TabViewItem();
-
-            newItem.Header = "New Document";
-            newItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Document };
+            var newItem = new TabViewItem
+            {
+                Header = "New Document",
+                IconSource = new SymbolIconSource() { Symbol = Symbol.Document }
+            };
 
             // The content of the tab is often a frame that contains a page, though it could be any UIElement.
-            Frame frameTab = new Frame();
+            var frameTab = new Frame();
             frameTab.Navigate(typeof(EditorPage));
             newItem.Content = frameTab;
 
@@ -162,10 +161,10 @@ namespace MicroexplorerApp
         }
     }
 
-    class WindowsSystemDispatcherQueueHelper
+    internal class WindowsSystemDispatcherQueueHelper
     {
         [StructLayout(LayoutKind.Sequential)]
-        struct DispatcherQueueOptions
+        private struct DispatcherQueueOptions
         {
             internal int dwSize;
             internal int threadType;
@@ -175,7 +174,7 @@ namespace MicroexplorerApp
         [DllImport("CoreMessaging.dll")]
         private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-        object m_dispatcherQueueController = null;
+        private object _mDispatcherQueueController;
         public void EnsureWindowsSystemDispatcherQueueController()
         {
             if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
@@ -184,15 +183,13 @@ namespace MicroexplorerApp
                 return;
             }
 
-            if (m_dispatcherQueueController == null)
-            {
-                DispatcherQueueOptions options;
-                options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-                options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-                options.apartmentType = 2; // DQTAT_COM_STA
+            if (_mDispatcherQueueController != null) return;
+            DispatcherQueueOptions options;
+            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+            options.apartmentType = 2; // DQTAT_COM_STA
 
-                CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
-            }
+            CreateDispatcherQueueController(options, ref _mDispatcherQueueController);
         }
 
     }

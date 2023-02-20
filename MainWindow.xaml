@@ -2,17 +2,17 @@
 <!-- Licensed under the MIT License. -->
 
 <Window
-    x:Class="MicroexplorerApp.MainWindow"
+    x:Class="Vitalpad.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MicroexplorerApp"
+    xmlns:local="using:Vitalpad"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Activated="Window_Activated"
     mc:Ignorable="d">
 
     <Grid>
-        <TabView x:Name="mainTab" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested" Loaded="TabView_Loaded" 
+        <TabView x:Name="MainTab" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested" Loaded="TabView_Loaded" 
                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
     </Grid>
 
