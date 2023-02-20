@@ -140,7 +140,7 @@ namespace MicroexplorerApp
             if (result == ContentDialogResult.Secondary) sender.TabItems.Remove(args.Tab);
         }
 
-        private TabViewItem CreateNewTab()
+        public static TabViewItem CreateNewTab()
         {
             TabViewItem newItem = new TabViewItem();
 

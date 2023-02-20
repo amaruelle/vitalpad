@@ -22,15 +22,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.7*"/>
             <RowDefinition Height="10*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.7*"/>
         </Grid.RowDefinitions>
 
         <MenuBar>
             <MenuBarItem Title="File">
-                <MenuFlyoutItem Text="New"/>
-                <MenuFlyoutItem Text="Open..."/>
-                <MenuFlyoutItem Text="Save"/>
-                <MenuFlyoutItem Text="Exit"/>
+                <MenuFlyoutItem Text="New" Name="NewFile" Click="NewFile_Click"/>
+                <MenuFlyoutItem Text="Open..." Name="OpenFile" Click="OpenFile_Click"/>
+                <MenuFlyoutItem Text="Save"  Name="SaveFile" Click="SaveFile_Click"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Edit">
@@ -38,6 +37,7 @@
                 <MenuFlyoutItem Text="Cut"/>
                 <MenuFlyoutItem Text="Copy"/>
                 <MenuFlyoutItem Text="Paste"/>
+                <MenuFlyoutItem Text="Font"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Help">
@@ -53,9 +53,11 @@
                      Grid.RowSpan="1"
                      Margin="10"
                      TextChanged="REBCustom_TextChanged"/>
+        
         <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Margin="10" Orientation="Horizontal" Spacing="10">
             <TextBlock Text="Symbols count: " x:Name="symbolsCount"></TextBlock>
             <TextBlock x:Name="wordsCount"/>
         </StackPanel>
+        
     </Grid>
 </Page>
