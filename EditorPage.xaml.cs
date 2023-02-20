@@ -21,6 +21,8 @@ using Windows.Storage.Provider;
 using Windows.Storage;
 using System.Runtime.InteropServices;
 using WinRT;
+using MicroexplorerApp;
+using static MicroexplorerApp.MainWindow;
 using Microsoft.UI.Text;
 using Microsoft.UI;
 
@@ -105,11 +107,7 @@ namespace MicroexplorerApp
 
         private void NewFile_Click(object sender, RoutedEventArgs e)
         {
-            var tabView = Parent as TabView;
-            if (tabView != null)
-            {
-                tabView.TabItems.Add(MainWindow.CreateNewTab());
-            }
+
         }
 
         private async void SaveFile_Click(object sender, RoutedEventArgs e)

@@ -24,6 +24,7 @@ using System.Runtime.InteropServices; // For DllImport
 using WinRT;
 using System.Xml.Linq;
 using Microsoft.UI;
+using System.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,6 +36,11 @@ namespace MicroexplorerApp
         WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See below for implementation.
         MicaController m_backdropController;
         SystemBackdropConfiguration m_configurationSource;
+
+        public TabView GetTabView()
+        {
+            return mainTab;
+        }
         public MainWindow()
         {
             this.InitializeComponent();
@@ -115,7 +121,7 @@ namespace MicroexplorerApp
             }
         }
 
-        private void TabView_AddButtonClick(TabView sender, object args)
+        public void TabView_AddButtonClick(TabView sender, object args)
         {
             sender.TabItems.Add(CreateNewTab());
         }
