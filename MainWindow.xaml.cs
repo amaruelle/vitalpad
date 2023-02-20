@@ -25,6 +25,7 @@ using WinRT;
 using System.Xml.Linq;
 using Microsoft.UI;
 using System.ComponentModel;
+using Windows.ApplicationModel.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,16 +37,26 @@ namespace Vitalpad
         private WindowsSystemDispatcherQueueHelper _mWsdqHelper; // See below for implementation.
         private MicaController _mBackdropController;
         private SystemBackdropConfiguration _mConfigurationSource;
+        ObservableCollection<TabViewItem> myDatas;
 
-        public TabView GetTabView()
-        {
-            return MainTab;
-        }
         public MainWindow()
         {
             this.InitializeComponent();
             TrySetSystemBackdrop();
+            Title = "Vitalpad";
+            InitializeDataBindingSampleData();
         }
+        
+        private void InitializeDataBindingSampleData()
+        {
+            myDatas = new ObservableCollection<TabViewItem>();
+
+            for (var index = 0; index < 3; index++)
+            {
+                myDatas.Add(CreateNewTab());
+            }
+        }
+        
 
         // creating a backdrop for Win11
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -113,17 +124,9 @@ namespace Vitalpad
             };
         }
 
-        private void TabView_Loaded(object sender, RoutedEventArgs e)
-        {
-            for (var i = 0; i < 3; i++)
-            {
-                ((TabView)sender).TabItems.Add(CreateNewTab());
-            }
-        }
-
         private void TabView_AddButtonClick(TabView sender, object args)
         {
-            sender.TabItems.Add(CreateNewTab());
+            myDatas.Add(CreateNewTab());
         }
 
         private async void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
@@ -141,7 +144,8 @@ namespace Vitalpad
             };
 
             var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Secondary) sender.TabItems.Remove(args.Tab);
+            if (result != ContentDialogResult.Secondary) return;
+            myDatas.Remove(args.Item as TabViewItem);
         }
 
         private static TabViewItem CreateNewTab()

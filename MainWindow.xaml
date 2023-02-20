@@ -12,8 +12,15 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TabView x:Name="MainTab" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested" Loaded="TabView_Loaded" 
-                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        <TabView x:Name="MainTab" TabItemsSource="{x:Bind myDatas}" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested"
+                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <TabView.TabStripHeader>
+                <Grid x:Name="ShellTitlebarInset" Background="Transparent" />
+            </TabView.TabStripHeader>
+            <TabView.TabStripFooter>
+                <Grid x:Name="CustomDragRegion" Background="Transparent" />
+            </TabView.TabStripFooter>
+        </TabView>
     </Grid>
 
 </Window>
