@@ -21,10 +21,13 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using WinRT;
 using Vitalpad;
 using Microsoft.UI.Text;
 using Microsoft.UI;
+using Vitalpad.Utils;
 
 namespace Vitalpad
 {
@@ -87,18 +90,26 @@ namespace Vitalpad
             var file = await open.PickSingleFileAsync();
 
             if (file == null) return;
-            using Windows.Storage.Streams.IRandomAccessStream randAccStream =
+            using var randAccStream =
                 await file.OpenAsync(FileAccessMode.Read);
             // Load the file into the Document property of the RichEditBox.
+            CreateLoadTab(file, randAccStream); 
             REBCustom.Document.LoadFromStream(TextSetOptions.FormatRtf, randAccStream);
+        }
+
+        private async void CreateLoadTab(StorageFile file, IRandomAccessStream stream)
+        {
             var item = MainWindow.CreateNewTab();
             item.Header = file.Name;
-            MainWindow.MyDatas.Add(item);
+            item.IsSelected = true;
+            Helper.Tabs.Add(item);
+            Helper.SelectedTab = Helper.Tabs[Helper.Tabs.IndexOf(item)];
+            await Task.CompletedTask;
         }
 
         private void NewFile_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.MyDatas.Add(MainWindow.CreateNewTab());
+            Helper.Tabs.Add(MainWindow.CreateNewTab());
         }
 
         private async void SaveFile_Click(object sender, RoutedEventArgs e)

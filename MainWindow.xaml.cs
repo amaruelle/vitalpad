@@ -26,6 +26,7 @@ using System.Xml.Linq;
 using Microsoft.UI;
 using System.ComponentModel;
 using Windows.ApplicationModel.Core;
+using Vitalpad.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,7 +38,6 @@ namespace Vitalpad
         private WindowsSystemDispatcherQueueHelper _mWsdqHelper; // See below for implementation.
         private MicaController _mBackdropController;
         private SystemBackdropConfiguration _mConfigurationSource;
-        public static ObservableCollection<TabViewItem> MyDatas { get; set; }
 
         public MainWindow()
         {
@@ -49,11 +49,11 @@ namespace Vitalpad
         
         private void InitializeDataBindingSampleData()
         {
-            MyDatas = new ObservableCollection<TabViewItem>();
+            Helper.Tabs = new ObservableCollection<TabViewItem>();
 
             for (var index = 0; index < 3; index++)
             {
-                MyDatas.Add(CreateNewTab());
+                Helper.Tabs.Add(CreateNewTab());
             }
         }
         
@@ -126,7 +126,7 @@ namespace Vitalpad
 
         private void TabView_AddButtonClick(TabView sender, object args)
         {
-            MyDatas.Add(CreateNewTab());
+            Helper.Tabs.Add(CreateNewTab());
         }
 
         private async void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
@@ -145,7 +145,7 @@ namespace Vitalpad
 
             var result = await dialog.ShowAsync();
             if (result != ContentDialogResult.Secondary) return;
-            MyDatas.Remove(args.Item as TabViewItem);
+            Helper.Tabs.Remove(args.Item as TabViewItem);
         }
 
         public static TabViewItem CreateNewTab()
@@ -160,7 +160,6 @@ namespace Vitalpad
             var frameTab = new Frame();
             frameTab.Navigate(typeof(EditorPage));
             newItem.Content = frameTab;
-
             return newItem;
         }
     }

@@ -6,13 +6,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Vitalpad"
+    xmlns:utils="using:Vitalpad.Utils"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Activated="Window_Activated"
     mc:Ignorable="d">
 
     <Grid>
-        <TabView x:Name="MainTab" TabItemsSource="{x:Bind MyDatas}" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested"
+        <TabView x:Name="MainTab" TabItemsSource="{x:Bind utils:Helper.Tabs}" AddTabButtonClick="TabView_AddButtonClick" SelectedItem="{x:Bind utils:Helper.SelectedTab}" TabCloseRequested="TabView_TabCloseRequested"
                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <TabView.TabStripHeader>
                 <Grid x:Name="ShellTitlebarInset" Background="Transparent" />
