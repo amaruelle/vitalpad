@@ -37,7 +37,7 @@ namespace Vitalpad
         private WindowsSystemDispatcherQueueHelper _mWsdqHelper; // See below for implementation.
         private MicaController _mBackdropController;
         private SystemBackdropConfiguration _mConfigurationSource;
-        ObservableCollection<TabViewItem> myDatas;
+        public static ObservableCollection<TabViewItem> MyDatas { get; set; }
 
         public MainWindow()
         {
@@ -49,11 +49,11 @@ namespace Vitalpad
         
         private void InitializeDataBindingSampleData()
         {
-            myDatas = new ObservableCollection<TabViewItem>();
+            MyDatas = new ObservableCollection<TabViewItem>();
 
             for (var index = 0; index < 3; index++)
             {
-                myDatas.Add(CreateNewTab());
+                MyDatas.Add(CreateNewTab());
             }
         }
         
@@ -126,7 +126,7 @@ namespace Vitalpad
 
         private void TabView_AddButtonClick(TabView sender, object args)
         {
-            myDatas.Add(CreateNewTab());
+            MyDatas.Add(CreateNewTab());
         }
 
         private async void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
@@ -145,10 +145,10 @@ namespace Vitalpad
 
             var result = await dialog.ShowAsync();
             if (result != ContentDialogResult.Secondary) return;
-            myDatas.Remove(args.Item as TabViewItem);
+            MyDatas.Remove(args.Item as TabViewItem);
         }
 
-        private static TabViewItem CreateNewTab()
+        public static TabViewItem CreateNewTab()
         {
             var newItem = new TabViewItem
             {

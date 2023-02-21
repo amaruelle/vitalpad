@@ -77,7 +77,7 @@ namespace Vitalpad
                 FileTypeFilter = { ".rtf" }
             };
 
-            // When running on win32, FileOpenPicker needs to know the top-level hwnd via IInitializeWithWindow::Initialize.
+            // When running on win32, FileOpenPicker needs to know the top-level hwnd via IInitializeWithWindow.Initialize.
             if (Window.Current == null)
             {
                 var hwnd = GetActiveWindow();
@@ -91,11 +91,14 @@ namespace Vitalpad
                 await file.OpenAsync(FileAccessMode.Read);
             // Load the file into the Document property of the RichEditBox.
             REBCustom.Document.LoadFromStream(TextSetOptions.FormatRtf, randAccStream);
+            var item = MainWindow.CreateNewTab();
+            item.Header = file.Name;
+            MainWindow.MyDatas.Add(item);
         }
 
         private void NewFile_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            MainWindow.MyDatas.Add(MainWindow.CreateNewTab());
         }
 
         private async void SaveFile_Click(object sender, RoutedEventArgs e)
