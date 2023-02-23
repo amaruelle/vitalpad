@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TabView x:Name="MainTab" TabItemsSource="{x:Bind utils:Helper.Tabs}" AddTabButtonClick="TabView_AddButtonClick" SelectedItem="{x:Bind utils:Helper.SelectedTab}" TabCloseRequested="TabView_TabCloseRequested"
+        <TabView x:Name="MainTab" TabItemsSource="{x:Bind utils:Helper.Tabs}" AddTabButtonClick="TabView_AddButtonClick" TabCloseRequested="TabView_TabCloseRequested"
                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <TabView.TabStripHeader>
                 <Grid x:Name="ShellTitlebarInset" Background="Transparent" />

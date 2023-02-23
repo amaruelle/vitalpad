@@ -50,6 +50,8 @@ namespace Vitalpad
         private void InitializeDataBindingSampleData()
         {
             Helper.Tabs = new ObservableCollection<TabViewItem>();
+            Helper.ActiveFiles = new Dictionary<StorageFile, string>();
+            Helper.Active = new Dictionary<TabViewItem, KeyValuePair<StorageFile, string>>();
 
             for (var index = 0; index < 3; index++)
             {
@@ -145,6 +147,13 @@ namespace Vitalpad
 
             var result = await dialog.ShowAsync();
             if (result != ContentDialogResult.Secondary) return;
+            if (!Helper.Active.ContainsKey(args.Item as TabViewItem))
+            {
+                Helper.Tabs.Remove(args.Item as TabViewItem);
+                return;
+            }
+            var key = Helper.Active[args.Item as TabViewItem].Key;
+            Helper.ActiveFiles.Remove(key);
             Helper.Tabs.Remove(args.Item as TabViewItem);
         }
 

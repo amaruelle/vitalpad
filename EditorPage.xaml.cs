@@ -35,10 +35,13 @@ namespace Vitalpad
     {
         [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, PreserveSig = true, SetLastError = false)]
         private static extern IntPtr GetActiveWindow();
+
+        private static bool IsChanged { get; set; }
         public EditorPage()
         {
             this.InitializeComponent();
         }
+
         private void Menu_Opening(object sender, object e)
         {
             var myFlyout = sender as CommandBarFlyout;
@@ -64,6 +67,7 @@ namespace Vitalpad
 
         private void REBCustom_TextChanged(object sender, RoutedEventArgs e)
         {
+            IsChanged = true;
             REBCustom.Document.GetText(TextGetOptions.AdjustCrlf, out var value);
             SymbolsCount.Text = "Symbols count: " + value.Length;
             var delimiters = new[] { ' ', ',', '.', ';', ':', '?', '!' };
@@ -90,21 +94,39 @@ namespace Vitalpad
             var file = await open.PickSingleFileAsync();
 
             if (file == null) return;
-            using var randAccStream =
-                await file.OpenAsync(FileAccessMode.Read);
-            // Load the file into the Document property of the RichEditBox.
-            CreateLoadTab(file, randAccStream); 
-            REBCustom.Document.LoadFromStream(TextSetOptions.FormatRtf, randAccStream);
-        }
-
-        private async void CreateLoadTab(StorageFile file, IRandomAccessStream stream)
-        {
-            var item = MainWindow.CreateNewTab();
-            item.Header = file.Name;
-            item.IsSelected = true;
-            Helper.Tabs.Add(item);
-            Helper.SelectedTab = Helper.Tabs[Helper.Tabs.IndexOf(item)];
-            await Task.CompletedTask;
+            using var randAccStream = await file.OpenAsync(FileAccessMode.Read);
+            using var reader = new DataReader(randAccStream.GetInputStreamAt(0));
+            await reader.LoadAsync((uint)randAccStream.Size);
+            var output = reader.ReadString((uint)randAccStream.Size);
+            if (Helper.ActiveFiles.ContainsValue(output) && file.Name == 
+                Helper.ActiveFiles.FirstOrDefault(x => x.Value == output).Key.Name)
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    Title = "Already open",
+                    CloseButtonText = "Close",
+                    Content = "File is already open",
+                    DefaultButton = ContentDialogButton.Close
+                    
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+            var tabViewItem = new TabViewItem
+            {
+                Header = file.Name,
+                IconSource = new SymbolIconSource() { Symbol = Symbol.Document }
+            };
+            var page = new EditorPage();
+            page.REBCustom.Document.LoadFromStream(TextSetOptions.FormatRtf, randAccStream);
+            tabViewItem.Content = page;
+            tabViewItem.IsSelected = true;
+            Helper.Tabs.Add(tabViewItem);
+            page.REBCustom.Document.GetText(TextGetOptions.FormatRtf, out var value);
+            Helper.ActiveFiles.Add(file, value);
+            Helper.Active.Add(tabViewItem, new KeyValuePair<StorageFile, string>(file, value));
         }
 
         private void NewFile_Click(object sender, RoutedEventArgs e)
@@ -114,6 +136,16 @@ namespace Vitalpad
 
         private async void SaveFile_Click(object sender, RoutedEventArgs e)
         {
+            // TODO Check if current tab is attached to file => if so, change without file picker
+            // REBCustom.Document.GetText(TextGetOptions.FormatRtf, out var value);
+            // var fileChecked = Helper.ActiveFiles.FirstOrDefault(x => x.Value == value).Key;
+            // if (Helper.ActiveFiles.ContainsKey(fileChecked))
+            // {
+            //     // write to file
+            //     using var randAccStream = await fileChecked.OpenAsync(FileAccessMode.ReadWrite);
+            //     REBCustom.Document.SaveToStream(TextGetOptions.FormatRtf, randAccStream);
+            //     return;
+            // }
             // Default file name if the user does not type one in or select a file to replace
             var savePicker = new FileSavePicker
             {
