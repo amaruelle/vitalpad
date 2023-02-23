@@ -27,17 +27,28 @@
 
         <MenuBar>
             <MenuBarItem Title="File">
-                <MenuFlyoutItem Text="New" Name="NewFile" Click="NewFile_Click"/>
-                <MenuFlyoutItem Text="Open..." Name="OpenFile" Click="OpenFile_Click"/>
-                <MenuFlyoutItem Text="Save"  Name="SaveFile" Click="SaveFile_Click"/>
+                <MenuFlyoutItem Text="New" Name="NewFile" Click="NewFile_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="N"></KeyboardAccelerator>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Open..." Name="OpenFile" Click="OpenFile_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="O"></KeyboardAccelerator>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Save"  Name="SaveFile" Click="SaveFile_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S"></KeyboardAccelerator>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
             </MenuBarItem>
 
             <MenuBarItem Title="Edit">
-                <MenuFlyoutItem Text="Undo"/>
-                <MenuFlyoutItem Text="Cut"/>
-                <MenuFlyoutItem Text="Copy"/>
-                <MenuFlyoutItem Text="Paste"/>
-                <MenuFlyoutItem Text="Font"/>
+                <MenuFlyoutItem Name="UndoItem" Text="Undo" Click="UndoItem_OnClick"/>
+                <MenuFlyoutItem Name="CutItem" Text="Cut" Click="CutItem_OnClick"/>
+                <MenuFlyoutItem Name="CopyItem" Text="Copy" Click="CopyItem_OnClick"/>
+                <MenuFlyoutItem Name="PasteItem" Text="Paste" Click="PasteItem_OnClick"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Help">

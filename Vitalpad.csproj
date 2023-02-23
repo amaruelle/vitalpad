@@ -9,6 +9,7 @@
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <ApplicationIcon>Icon-Fluent.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="EditorPage.xaml" />
@@ -22,6 +23,10 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <None Remove="Icon-Fluent.ico" />
+    <Content Include="Icon-Fluent.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

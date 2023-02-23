@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -202,6 +203,26 @@ namespace Vitalpad
             var result = await info.ShowAsync();
             if (result == ContentDialogResult.Primary)
                 await Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/AmaruelleOF/Vitalpad"));
+        }
+
+        private void PasteItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            REBCustom.Document.Selection?.Paste(0);
+        }
+
+        private void CopyItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            REBCustom.Document.Selection?.Copy();
+        }
+
+        private void CutItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            REBCustom.Document.Selection?.Cut();
+        }
+
+        private void UndoItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (REBCustom.Document.CanUndo()) REBCustom.Document.Undo();
         }
     }
 }

@@ -1,6 +1,10 @@
 # Vitalpad — your Notepad replacement
 > The project is still in active development!
 
+<div style="text-align: center;">
+<img src="Icon-Fluent.ico">
+</div>
+
 If you wish to test it, place here your suggestions or issues,
 they'll be reviewed ASAP.
 
